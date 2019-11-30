@@ -18,6 +18,8 @@ class CreatePostsTable extends Migration
             $table->integer('user_id');
             $table->string('title');
             $table->text('body');
+            $table->string('image');
+            $table->text('description')->nullable();
             $table->string('utube')->default('https://www.youtube.com/embed/r_gBTgeymgs');
             $table->timestamps();
         });

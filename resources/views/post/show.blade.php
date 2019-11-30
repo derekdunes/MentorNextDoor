@@ -16,6 +16,11 @@
 					{{ $post->updated_at->format('F d, Y') }} by
 					<a href="#">Jacob</a></p>
 
+				<p>
+					<img src="{{ url(Config::get('image.upload_folder') .
+					 '/' . $post->image) }}" alt="{{ $post->title }}">
+				</p>
+
 		        <p>{{ $post->body }}</p>
 
 		        <blockquote>

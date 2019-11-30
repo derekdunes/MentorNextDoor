@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Input;
+use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
-use App\Post;
-use auth;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Post;
+use Config;
+use File;
+use auth;
+use DB;
+
+
 
 class PostController extends Controller
 {
@@ -23,11 +31,18 @@ class PostController extends Controller
 
     public function index()
     {
-        //
-
-        $posts = Post::latest()
+        Post::latest()
         	->filter(request(['month', 'year']))
         	->get();
+
+        return view('post.index', compact('posts'));
+    }
+
+    public function edit(Post $post)
+    {
+        $posts = Post::latest()
+            ->filter(request(['month', 'year']))
+            ->get();
 
         return view('post.index', compact('posts'));
     }
@@ -49,7 +64,7 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $req)
     {
         //create a new post using the request data
         // $post = new Post;
@@ -63,20 +78,60 @@ class PostController extends Controller
 
         $this->validate(request(), [
 
-            'title' => 'required',
+            'title' => 'required|min:5',
             'body' => 'required'
         
         ]);
 
-        auth()->user()->publish(new Post(request(['title', 'body'])));
+        //if validation passes
+        $image = Input::file('image');
 
-        // Post::create([
-        //     'title' => request('title'),
-        //     'body' => request('body'),
-        //     'user_id' => auth()->id()
-        // ]);
+        $filename = $image->getClientOriginalName();
 
-        session()->flash('message', 'Your post has now been published');
+        $filename = pathinfo($filename, PATHINFO_FILENAME);
+
+        //in production check if url/image file name already exist
+        //make url friendly
+        $fullname = Str::slug(Str::random(8).$filename) . '.' . $image->getClientOriginalExtension();
+
+        //upload image to upload folder then make a thumbnail from the upload image
+        $upload = $image->move(Config::get('image.upload_folder'), $fullname);
+
+        if($upload){
+            $post = new Post;
+
+            $title = $req->title;
+            $body = $req->body;
+            $image = $fullname;
+            $description = $req->description;
+
+            if ($title)
+                $post->title = $title;
+            
+            if ($body)
+                $post->body = $body;
+
+            if ($image)
+                $post->image = $image;
+
+            if ($description)
+                $post->description = $description;
+
+           auth()->user()->publish($post)); 
+
+            // Post::create([
+            //     'title' => request('title'),
+            //     'body' => request('body'),
+            //     'user_id' => auth()->id()
+            // ]);
+
+            session()->flash('message', 'Your post has now been published');
+
+        } else {
+            session()->flash('message', 'Your image was not updated successfully');
+
+            return back();
+        }
 
         // And then redirect to the home page
         return redirect('/');
@@ -105,6 +160,9 @@ class PostController extends Controller
     public function edit($id)
     {
         //
+        $post = Post::find($id);
+
+        return view('post.edit', compact('post'));
     }
 
     /**
@@ -114,9 +172,93 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $id)
     {
-        //
+
+        // create a new post using the request data
+        // $post = new Post;
+
+        // $post->title = request('title');
+        
+        // $post->body = request('body');
+
+        // //save it to the database
+        // $post->save();
+
+        $post = Post::find($id);
+
+        //if validation passes
+        $image = Input::file('image');
+
+        $filename = $image->getClientOriginalName();
+
+        $filename = pathinfo($filename, PATHINFO_FILENAME);
+
+        //in production check if url/image file name already exist
+        //make url friendly
+        $fullname = Str::slug(Str::random(8).$filename) . '.' . $image->getClientOriginalExtension();
+
+        //upload image to upload folder then make a thumbnail from the upload image
+        $upload = $image->move(Config::get('image.upload_folder'), $fullname);
+        
+        if ($upload) {
+
+            $title = $req->title;
+            $body = $req->body;
+            $image = $fullname;
+            $description = $req->description;
+
+            if ($title)
+                $post->title = $title;
+            
+            if ($body)
+                $post->body = $body;
+
+            if ($image)
+                $post->image = $image;
+
+            if ($description)
+                $post->description = $description;
+
+            auth()->user()->publish($post);
+
+            // Post::create([
+            //     'title' => request('title'),
+            //     'body' => request('body'),
+            //     'user_id' => auth()->id()
+            // ]);
+
+            session()->flash('message', 'Your post has been Updated');    
+        } else {
+
+            $title = $req->title;
+            $body = $req->body;
+            $description = $req->description;
+
+            if ($title)
+                $post->title = $title;
+            
+            if ($body)
+                $post->body = $body;
+
+            if ($description)
+                $post->description = $description;
+
+            auth()->user()->publish($post);
+
+            // Post::create([
+            //     'title' => request('title'),
+            //     'body' => request('body'),
+            //     'user_id' => auth()->id()
+            // ]);
+
+            session()->flash('message', 'Your post has been Updated without any Image');    
+        }
+
+        
+
+        // And then redirect to the home page
+        return redirect('/');
     }
 
     /**
@@ -128,5 +270,11 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+        Post::delete($id);
+
+        session()->flash('message', 'Your post has been deleted');
+
+        // And then redirect to the home page
+        return redirect('/');
     }
 }

@@ -22,8 +22,9 @@ Route::GET('/posts/{post}', 'PostController@show');
 
 Route::GET('/post/create', 'PostController@create');
 
-Route::POST('/posts', 'PostController@store');
+Route::PUT('/post/edit/{post}', 'PostController@edit')
 
+Route::POST('/posts', 'PostController@store');
 
 Route::POST('/posts/{post}/comments', 'CommentsController@store');
 

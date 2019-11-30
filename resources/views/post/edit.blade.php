@@ -5,7 +5,7 @@
 
 <div class="col-md-8 blog-main">
 
-	<h1> Publish a Post </h1>
+	<h1> Edit a Post </h1>
 
 	<hr>
 
@@ -17,7 +17,7 @@
 			
 			<label for="title">Title:</label>
 			
-			<input type="text" class="form-control" id="title" name="title">
+			<input type="text" class="form-control" id="title" name="title" value="{{ post->title }}">
 
 		</div>
 
@@ -25,7 +25,7 @@
 			
 			<label for="body">Body</label>
 			
-			<textarea id="body" name="body" class="form-control"></textarea>	
+			<textarea id="body" name="body" class="form-control">{{ post->body }}</textarea>	
 		
 		</div>
 
@@ -33,7 +33,7 @@
 			
 			<label for="description">Image Title:</label>
 			
-			<input type="text" class="form-control" id="description" name="title" placeholder="Please insert your image title here">
+			<input type="text" class="form-control" id="description" name="title" value="{{ post->description }}">
 
 		</div>
 
@@ -46,7 +46,7 @@
 		</div>
 		
 		<div class="form-group">
-			<button type="submit" class="btn btn-primary">Publish</button>	
+			<button type="submit" class="btn btn-primary">Update</button>	
 		</div>
 		
 		@include('layouts.errors')
