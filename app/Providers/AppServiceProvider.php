@@ -5,7 +5,7 @@ namespace App\Providers;
 use \App\Billing\Stripe;
 
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +30,8 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    {
+    {    
+        Schema::defaultStringLength(191);
         $this->app->singleton(Stripe::class, function () {
             return new Stripe(config('services.stripe.secret'));
         });
