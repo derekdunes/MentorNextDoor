@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-use Auth;
+use App\User;
 
 class SessionsController extends Controller
 {
@@ -21,13 +22,19 @@ class SessionsController extends Controller
     	
     }
 
-    public function store(){
+    public function store(Request $req){
 
-    	//authenticate the user
-    	if(auth()->attempt(request(['email', 'password']))){
-    		  
-            return redirect()->home();
-		
+        //authenticate the user
+        $user = User::where('email', '=', $req->email)->orWhere('password', '=', $req->password )->get();
+
+    	if(isset($user) && count($user) == 1){
+            $credentials = $req->only('email','password');
+            
+            dd(Auth::attempt($credentials));
+
+            if(Auth::attempt($credentials)){
+                return redirect()->home();
+            }
 		}
 
         return back()->withErrors([

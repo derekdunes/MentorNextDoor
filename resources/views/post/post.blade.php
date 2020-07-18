@@ -1,15 +1,18 @@
 <div class="blog-post">
 		        <h2 class="blog-post-title">
-		        	<a href="/posts/{{ $post->id }}">
+		        	<a href="{{ url(route('posts.show', $post->id)) }}">
 		        		{{ $post->title }}
 		        	</a>
 		    	</h2>
-
+				
 		        <p class="blog-post-meta">
 		        	Created on {{ $post->created_at->toFormattedDateString() }} by
 		        <a href="#" class="username">{{ $post->user->name }}</a></p>
+		
+		    
+					<img src="{{ url( '/uploads/'. $post->image) }}" style="width:100%; height: 400px"/>
 
-		        {{ $post->body }}
+				{{ $post->body }}
 <!-- 
 		        <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
 		        <blockquote>

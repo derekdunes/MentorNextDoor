@@ -40,7 +40,7 @@ class RegistrationForm extends FormRequest
     public function persist(){
 
         //create and save the user
-        $user = User::create($this->only(['name','email','password']));
+        $user = User::create($this->only(['name','email',bcrypt('password')]));
 
         //sign in the user
         auth::login($user);

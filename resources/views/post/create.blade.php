@@ -9,7 +9,7 @@
 
 	<hr>
 
-	<form method="POST" action="/posts">
+	<form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
 		
 		{{ csrf_field() }}
 
@@ -33,7 +33,7 @@
 			
 			<label for="description">Image Title:</label>
 			
-			<input type="text" class="form-control" id="description" name="title" placeholder="Please insert your image title here">
+			<input type="text" class="form-control" id="description" name="description" placeholder="Please insert your image title here">
 
 		</div>
 

@@ -15,14 +15,20 @@
 		      </h3>
 
 	@foreach ($posts as $post)
-	 
-		@include('post.post')<!-- /.blog-post -->
-	
+		@if(!$loop->first)
+			@include('post.post')<!-- /.blog-post -->
+		@endif
 	@endforeach
 
 	<nav class="blog-pagination">
-        <a class="btn btn-outline-primary" href="#">Older</a>
-        <a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+				@guest
+					<a class="btn btn-outline-primary" href="#">Older</a>
+					<a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+				@else
+					<a class="btn btn-outline-primary" href="#">Older</a>
+					<a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+					<a class="btn btn-outline-primary" href="{{ route('posts.create') }}">Create Post</a>
+				@endguest
       </nav>
     </div><!-- /.blog-main -->
 

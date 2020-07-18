@@ -31,21 +31,23 @@ class PostController extends Controller
 
     public function index()
     {
-        Post::latest()
-        	->filter(request(['month', 'year']))
-        	->get();
-
-        return view('post.index', compact('posts'));
-    }
-
-    public function edit(Post $post)
-    {
         $posts = Post::latest()
-            ->filter(request(['month', 'year']))
+        	->filter(request(['month', 'year']))
             ->get();
+            
+        $headPost = Post::latest()->get();
 
-        return view('post.index', compact('posts'));
+        return view('post.index', compact('posts', 'headPost'));
     }
+
+    // public function edit(Post $post)
+    // {
+    //     $posts = Post::latest()
+    //         ->filter(request(['month', 'year']))
+    //         ->get();
+
+    //     return view('post.index', compact('post','posts'));
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -117,7 +119,7 @@ class PostController extends Controller
             if ($description)
                 $post->description = $description;
 
-           auth()->user()->publish($post)); 
+           auth()->user()->publish($post); 
 
             // Post::create([
             //     'title' => request('title'),
@@ -157,12 +159,16 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($post)
     {
         //
-        $post = Post::find($id);
+        $post = Post::find($post);
 
-        return view('post.edit', compact('post'));
+            $posts = Post::latest()
+            ->filter(request(['month', 'year']))
+            ->get();
+
+        return view('post.edit', compact('post','posts'));
     }
 
     /**
@@ -172,7 +178,7 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $req, $id)
+    public function update(Request $req, $post)
     {
 
         // create a new post using the request data
@@ -185,8 +191,9 @@ class PostController extends Controller
         // //save it to the database
         // $post->save();
 
-        $post = Post::find($id);
+        $post = Post::find($post);
 
+        if ($req->hasFile('image')) {
         //if validation passes
         $image = Input::file('image');
 
@@ -255,7 +262,22 @@ class PostController extends Controller
             session()->flash('message', 'Your post has been Updated without any Image');    
         }
 
+    }else {
+        $title = $req->title;
+        $body = $req->body;
+        $description = $req->description;
+
+        if ($title)
+            $post->title = $title;
         
+        if ($body)
+            $post->body = $body;
+
+        if ($description)
+            $post->description = $description;
+
+        auth()->user()->publish($post); 
+    }
 
         // And then redirect to the home page
         return redirect('/');

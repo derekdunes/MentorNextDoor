@@ -9,7 +9,7 @@
 
 	<hr>
 
-	<form method="POST" action="/posts">
+	<form method="POST" action="{{ route('posts.update', $post->id)) }}">
 		
 		{{ csrf_field() }}
 
@@ -17,7 +17,7 @@
 			
 			<label for="title">Title:</label>
 			
-			<input type="text" class="form-control" id="title" name="title" value="{{ post->title }}">
+			<input type="text" class="form-control" id="title" name="title" value="{{ $post->title }}">
 
 		</div>
 
@@ -25,7 +25,7 @@
 			
 			<label for="body">Body</label>
 			
-			<textarea id="body" name="body" class="form-control">{{ post->body }}</textarea>	
+			<textarea id="body" name="body" class="form-control">{{ $post->body }}</textarea>	
 		
 		</div>
 
@@ -33,7 +33,7 @@
 			
 			<label for="description">Image Title:</label>
 			
-			<input type="text" class="form-control" id="description" name="title" value="{{ post->description }}">
+			<input type="text" class="form-control" id="description" name="description" value="{{ $post->description }}">
 
 		</div>
 
@@ -41,6 +41,8 @@
 			
 			<label for="image">Image</label>
 			
+			<img src="/uploads/{{ $post->image }}" />
+
 			<input type="file" class="form-control" id="image" name="image" accept="image/*">
 
 		</div>

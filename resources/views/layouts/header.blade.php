@@ -15,6 +15,8 @@
 
           <a href="" class="username">{{ Auth::user()->name }}</a>
 
+          <a class="btn btn-sm  btn-outline-secondary" href="/logout">Log Out</a>
+
         @else
 
           <a class="btn btn-sm " href="/register">Sign up</a>

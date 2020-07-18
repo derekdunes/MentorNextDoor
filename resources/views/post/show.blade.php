@@ -14,11 +14,11 @@
 
 		        <p class="blog-post-meta">
 					{{ $post->updated_at->format('F d, Y') }} by
-					<a href="#">Jacob</a></p>
+					<a href="#">{{ $post->user->name }}</a></p>
 
 				<p>
 					<img src="{{ url(Config::get('image.upload_folder') .
-					 '/' . $post->image) }}" alt="{{ $post->title }}">
+					 '/' . $post->image) }}" alt="{{ $post->descrption }}" style="width:100%; height: 400px">
 				</p>
 
 		        <p>{{ $post->body }}</p>
@@ -34,6 +34,7 @@
 		      </div><!-- /.blog-post -->
 
 	<nav class="blog-pagination">
+		<a class="btn btn-outline-primary" href="{{ url(route('posts.index')) }}">back</a>
         <a class="btn btn-outline-primary" href="#">Older</a>
         <a class="btn btn-outline-secondary disabled" href="#">Newer</a>
       </nav>

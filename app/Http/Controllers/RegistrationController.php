@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 // use Illuminate\Http\Request;
 
-// use App\User;
+use App\User;
 
 // use App\Mail\welcome;
 
@@ -26,28 +26,46 @@ class RegistrationController extends Controller
  
     	//validate the form
 
-    	// $this->validate(request(), [
-    	// 	'name' => 'required',
-    	// 	'email' => 'required|email',
-    	// 	'password' => 'required|confirmed'
-    	// ]);
+    	$this->validate(request(), [
+    		'name' => 'required',
+    		'email' => 'required|email',
+    		'password' => 'required|confirmed'
+    	]);
+		
+		//check if user Email exist in the database
+		$user = User::where('email', '=', request('email'));
 
-    	// //create and save the user
-    	// $user = User::create(request(['name','email','password']));
+		if(isset($user)){
+			return back()->withErrors([
 
-    	// //sign in the user
-    	// auth::login($user);
+                'message' => 'Email already exist in our database. Try login'
 
-     //    //welcome new user via mail
-     //    \Mail::to($user)->send(new Email($user));
+        	]);
+		}else {
+			//create and save the user
+			$user = new User;
 
-    	//Redirect to the home page
+			$user->name = request('name');
+			$user->email = request('email');
+			$user->password = bcrypt(request('password'));
+			$user->save();
 
-        $Form->persist();
+			//sign in the user
+			auth::login($user);
+	
+			//welcome new user via mail
+			//\Mail::to($user)->send(new Email($user));
+	
+			//Redirect to the home page
+	
+			//$Form->persist();
+	
+			session()->flash('message', 'Thanks so much for signing up!');
+	
+			return redirect()->home();
 
-        session()->flash('message', 'Thanks so much for signing up!');
-
-    	return redirect()->home();
+		}
+    	
 
 
     }
