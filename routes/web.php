@@ -17,6 +17,7 @@ Route::POST('/store', 'LinkController@store');
 //Blog
 
 Route::resource('posts', 'PostController');
+Route::resource('bits', 'BitsController');
 
 Route::GET('/', 'PostController@index')->name('home');
 

@@ -7,129 +7,117 @@
 
 <div class="col-md-10 blog-main">
 
-	<h1> Publish a Post </h1>
+		<div class="blog-post">	
+
+					@if($bit->body_type == 0)
+						<h3 class="pb-3 mb-4 font-italic border-bottom">
+		        			{{ $bit->body }}
+		      			</h3>
+					@endif
+
+					@if($bit->body_type == 1)
+						<p>
+							{{ $bit->body }}
+						</p>
+					@endif
+
+					@if($bit->body_type == 2)
+						<p>
+
+							<img src="{{ url(Config::get('image.upload_folder') .
+					 '/' . $bit->body) }}" alt="" style="width:100%; height: 400px">
+
+						</p>
+					@endif
+
+					@if($bit->body_type == 3)
+						<blockquote>
+				          	<p>
+				          		<iframe width="100%" height="420px" src="{{ $bit->body }}"></iframe>
+							</p>
+				        </blockquote>
+					@endif
+		</div><!-- /.blog-main -->
+
+	<h1> Edit This Post </h1>
 
 	<hr>
 
-	<form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+	<form method="POST" action="{{ route('bits.update', $bit->id) }}" enctype="multipart/form-data">
+		<input type="hidden" name="_method" value="PUT">
 		
 		{{ csrf_field() }}
 
-		<div class="form-group">
-			
-			<label for="title">Title:</label>
-			
-			<input type="text" class="form-control" id="title" name="title">
+		@if($bit->body_type == 0)
+			<div class="form-group">
+				
+				<label for="title">Header Text:</label>
 
-		</div>
+				<input type="text" class="form-control" id="title" name="head" value="{{ $bit->body }}">
 
-		<div class="form-group">
-			
-			<label for="image">Heading Image</label>
-			
-			<input type="file" class="form-control" id="image" name="photo" accept="image/*">
+			</div>
+		@endif
 
-		</div>
+		@if($bit->body_type == 1)
+			<div class="form-group">
+				
+				<label for="title">Text:</label>
 
-		<div class="more">                    
-        </div>
+				<textarea rows="10" cols="10" class="form-control" name="text">{{ $bit->body }}</textarea>
 
-        <div class="form-group row mb-0">
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary" onclick="createHeaderArea()">
-                    Add Body Header
-                </button>
-            </div>
+			</div>
+		@endif
 
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary" onclick="createTextArea()">
-                    Add Body Text
-                </button>
-            </div>                     
+		@if($bit->body_type == 3)
 
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary" onclick="createImage()">
-                    Add Body Image
-                </button>
-            </div>
-                            
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary" onclick="createEmbed()">
-                    Add Embed (Video, Code, etc)
-                </button>
-            </div>
-                            
-            <div class="col-md-3">
-                <button type="button" class="btn btn-primary" onclick="removeForm()">
-                    Remove Last Widget
-                </button>
-            </div>
-        </div>
+			<div class="form-group">
+				
+				<label for="title">Embed:</label>
+				
+				<input type="url" class="form-control" id="title" name="embed" value="{{ $bit->body }}">
 
-        <br/>
+			</div>
+
+		@endif
+
+		@if($bit->body_type == 2)
+
+			<div class="form-group">
+				
+				<label for="image">Image</label>
+
+				<input type="file" class="form-control" id="image" name="image" accept="image/*">
+
+			</div>
+
+		@endif
 		
 		<div class="form-group">
-			<button type="submit" class="btn btn-primary">Publish</button>	
+			<button type="submit" class="btn btn-primary">Update</button>	
 		</div>
 		
 		@include('layouts.errors')
 
 	</form>
 
+		<nav class="blog-pagination">
+		@guest
+			<a class="btn btn-outline-primary" href="{{ url(route('posts.index')) }}">back</a>
+        	<a class="btn btn-outline-primary" href="#">Older</a>
+        	<a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+		@else
+			<a class="btn btn-outline-primary" href="{{ url(route('bits.destroy',$bit->id)) }}">Delete Widget</a>
+        	<a class="btn btn-outline-primary" href="#">Older</a>
+        	<a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+		@endguest
+
+      </nav>
 
 </div>
 
 <script type="text/javascript">
 
-	function createHeaderArea(){
-
-		var $more_forms = $("div[class='more']");
-
-        var $parent_div = $("<div>", {id:"clones"});
-
-
-            //create Embed Type
-
-            var $form_group_div = $("<div>", {class: "form-group"});
-
-            var $label = $("<label>", {for: "type"});
-
-            $label.append("Body Type");
-
-            var $selectInput = $("<select>", {id: "type", class:"form-control", name:"type[]", required: true});
-
-            var $optionInput = $("<option>", {value: "0" , selected: true});
-
-            $optionInput.append("Header Content");
-
-            $selectInput.append($optionInput);
-
-            $form_group_div.append($label);
-            $form_group_div.append($selectInput);
-
-            $parent_div.append($form_group_div);
-
-            $more_forms.append($parent_div);
-
-        //create Text
-
-            var $form_group_div = $("<div>", {class: "form-group"});
-
-            var $label = $("<label>", {for: "description"});
-
-            $label.append("mini Header");
-
-            var $headInput = $("<input>", {id: "header", type: "text", class: "form-control", name:"head[]", required: true});
-
-            $form_group_div.append($label);
-            $form_group_div.append($headInput);
-
-            $parent_div.append($form_group_div);
-
-            $more_forms.append($parent_div);
-
-	}
-
+	//will consider changing widgets later
 	function createEmbed(){
 
 			var $more_forms = $("div[class='more']");
@@ -283,4 +271,3 @@
 </script>
 
 @endsection 
-

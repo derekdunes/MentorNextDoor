@@ -30,7 +30,7 @@ class SessionsController extends Controller
     	if(isset($user) && count($user) == 1){
             $credentials = $req->only('email','password');
             
-            dd(Auth::attempt($credentials));
+            //dd(Auth::attempt($credentials));
 
             if(Auth::attempt($credentials)){
                 return redirect()->home();

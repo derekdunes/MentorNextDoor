@@ -55,6 +55,10 @@ class Post extends Model
         }
     }
 
+    public function bits(){
+        return $this->hasMany(Bits::class, 'post_id');
+    }
+
     public function tags(){
 
         return $this->belongsToMany(Tag::class);
